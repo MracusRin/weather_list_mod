@@ -20,7 +20,12 @@ def search_line(search_date):
     for i in range(start_search, end_searhc, ): #диапазаон поиска даты
         if search_date == ws.cell(i,datacol).value:
             data_line = str(ws.cell(i,datacol).row)
-    weather= ['B' + data_line,'C' + data_line,'D' + data_line,'E' + data_line,'F' + data_line]
+ #   tempcell = 
+    humcell  = 'C' + data_line
+    prescell = 'D' + data_line
+    voltcell = 'E' + data_line
+    freqcell = 'F' + data_line
+    weather= ['B' + data_line ,humcell,prescell,voltcell,freqcell]
     return weather     
 
 weather_cell=search_line(current_date) 
