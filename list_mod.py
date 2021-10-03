@@ -26,7 +26,10 @@ def search_line_cell(search_date):
 def print_weather (weather_cell):
     a=[]
     for i in range(0, len(title_parameter)):
-        a.append(title_parameter[i] + str(ws[weather_cell[i]].value) + weather_unit[i])
+        item=str(ws[weather_cell[i]].value)
+        if item == 'None':
+            item = 'н/д '
+        a.append(title_parameter[i] + item + weather_unit[i])
     print(a[0],'|', a[1],'|', a[2],'|', a[3],'|', a[4])
 
 print(f'Норманьные условия сегодня: {current_date}')
