@@ -3,8 +3,8 @@ import time
 from datetime import datetime
 
 current_date = datetime.now().strftime('%d.%m.%Y')
-#fileadd='Y:\\Супер общий зал\\Нормальные условия.xlsx'
-fileadd='E:\\OneDrive\\Programming\\Python\\project\\exel\\weather.xlsx'
+fileadd='Y:\\Супер общий зал\\Нормальные условия.xlsx'
+#fileadd='E:\\OneDrive\\Programming\\Python\\project\\exel\\weather.xlsx'
 datecol=7 # Номер колонки где сохранена дата в файле
 chort=0
 start_search = 1000
@@ -39,7 +39,7 @@ if ans == '1':
 
         for i in range(0, len(title_parameter)):
             ws[weather_cell[i]] = float(input(title_parameter[i]))
-            ws[weather_cell[i]].number_format='0.0'           
+            ws[weather_cell[i]].number_format='0.00'           
 
         print('\nСохранение...')
         wb.save(fileadd)
