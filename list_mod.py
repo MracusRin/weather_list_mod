@@ -3,28 +3,34 @@ import time
 from datetime import datetime
 
 current_date = datetime.now().strftime('%d.%m.%Y')
-fileadd='Y:\\Супер общий зал\\Нормальные условия.xlsx'
-#fileadd='E:\\OneDrive\\Programming\\Python\\project\\exel\\weather.xlsx'
+#fileadd='Y:\\Супер общий зал\\Нормальные условия.xlsx'
+fileadd='E:\\OneDrive\\Programming\\Python\\project\\exel\\weather.xlsx'
 datecol=7 # Номер колонки где сохранена дата в файле
 chort=0
 start_search = 1000
 end_searhc = 2001
 wb = openpyxl.load_workbook(fileadd)
 ws = wb.active    
-title_parameter = ['Температура: ', 'Влажность: ', 'Давление: ', 'Напряжение: ', 'Частота: ']
-#weather_unit = ['°С','%','кПа','В','Гц']
+title_parameter = ['\nТемпература: ', 'Влажность: ', 'Давление: ', 'Напряжение: ', 'Частота: ']
+weather_unit = [' °С',' %',' кПа',' В',' Гц']
 
-def search_line(search_date):
+def search_line_cell(search_date):
     #for i in range(1, ws.max_row + 1, ): # поиск по максимуму, до конца документа
-    for i in range(start_search, end_searhc, ): #диапазаон поиска даты
+    for i in range(start_search, end_searhc, ):
         if search_date == ws.cell(i,datecol).value:
             data_line = str(ws.cell(i,datecol).row)
     weather = ['B' + data_line,'C' + data_line,'D' + data_line,'E' + data_line,'F' + data_line]
-    return weather     
+    return weather  
 
-weather_cell=search_line(current_date) 
+def print_weather (weather_cell):
+    a=[]
+    for i in range(0, len(title_parameter)):
+        a.append(title_parameter[i] + str(ws[weather_cell[i]].value) + weather_unit[i])
+    print(a[0],'|', a[1],'|', a[2],'|', a[3],'|', a[4], '\n')
+
 print(f'Норманьные условия сегодня: {current_date}')
-print(f'\nТемпература: {ws[weather_cell[0]].value} °С | Влажность: {ws[weather_cell[1]].value} % | Давление: {ws[weather_cell[2]].value} кПа | Напряжение: {ws[weather_cell[3]].value} В | Частота: {ws[weather_cell[4]].value} Гц\n')
+weather_cell=search_line_cell(current_date) 
+print_weather(weather_cell)
 
 ans = input('Ввести данные - нажмите 1. Посмотреть данные по дате - нажмите 2: ')
 if ans == '1':
@@ -46,13 +52,15 @@ if ans == '1':
         print('Сохранение выполнено!')
 
         print(f'\nВведенные данные: {current_date}')
-        print(f'\nТемпература: {ws[weather_cell[0]].value} °С | Влажность: {ws[weather_cell[1]].value} % | Давление: {ws[weather_cell[2]].value} кПа | Напряжение: {ws[weather_cell[3]].value} В | Частота: {ws[weather_cell[4]].value} Гц\n')
+        print_weather(weather_cell)
+
 elif ans == '2':
     search_date=input('Введите дату в формате дд.мм.гггг: ')
-    weather_cell_seacrh = search_line(search_date) 
     print(f'\nНормальные условия: {search_date}')
-    print(f'\nТемпература: {ws[weather_cell_seacrh[0]].value} °С | Влажность: {ws[weather_cell_seacrh[1]].value} % | Давление: {ws[weather_cell_seacrh[2]].value} кПа | Напряжение: {ws[weather_cell_seacrh[3]].value} В | Частота: {ws[weather_cell_seacrh[4]].value} Гц\n')
+    weather_cell = search_line_cell(search_date) 
+    print_weather(weather_cell)
     time.sleep(7)
+
 else:
     print('Ввод отмен')
 
