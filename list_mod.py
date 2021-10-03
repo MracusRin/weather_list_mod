@@ -11,22 +11,25 @@ end_searhc = 2001
 wb = openpyxl.load_workbook(fileadd)
 ws = wb.active    
 
+#Можно принимать значинея от пользователя в массивы!!!!!!!!
+
 def search_line(search_date):
     #for i in range(1, ws.max_row + 1, ): # поиск по максимуму, до конца документа
     for i in range(start_search, end_searhc, ): #диапазаон поиска даты
         if search_date == ws.cell(i,datacol).value:
             data_line = str(ws.cell(i,datacol).row)
+        
     return data_line     
 
 dline=search_line(current_date)                 
-tempbox = 'B' + dline
-humbox  = 'C' + dline
-presbox = 'D' + dline
-voltbox = 'E' + dline
-freqbox = 'F' + dline
+tempcell = 'B' + dline
+humcell  = 'C' + dline
+prescell = 'D' + dline
+voltcell = 'E' + dline
+freqcell = 'F' + dline
 
 print(f'Норманьные условия сегодня: {current_date}')
-print(f'\nТемпература: {ws[tempbox].value} °С | Влажность: {ws[humbox].value} % | Давление: {ws[presbox].value} кПа | Напряжение: {ws[voltbox].value} В | Частота: {ws[freqbox].value} Гц\n')
+print(f'\nТемпература: {ws[tempcell].value} °С | Влажность: {ws[humcell].value} % | Давление: {ws[prescell].value} кПа | Напряжение: {ws[voltcell].value} В | Частота: {ws[freqcell].value} Гц\n')
 
 ans = input('Ввести данные - нажмите 1. Посмотреть данные по дате - нажмите 2: ')
 if ans == '1':
@@ -39,26 +42,26 @@ if ans == '1':
 
     if chort != 1:
 
-        ws[tempbox] = float(input('\nТемпература: '))
-        ws[tempbox].number_format='0.0'
+        ws[tempcell] = float(input('\nТемпература: '))
+        ws[tempcell].number_format='0.0'
       
-        ws[humbox] = float(input('Влажность: '))
-        ws[humbox].number_format='0.0'
+        ws[humcell] = float(input('Влажность: '))
+        ws[humcell].number_format='0.0'
 
-        ws[presbox] = float(input('Давление: '))
-        ws[presbox].number_format='0.00'
+        ws[prescell] = float(input('Давление: '))
+        ws[prescell].number_format='0.00'
 
-        ws[voltbox] = float(input('Напряжение: '))
-        ws[voltbox].number_format='0.0'
+        ws[voltcell] = float(input('Напряжение: '))
+        ws[voltcell].number_format='0.0'
 
-        ws[freqbox] = float(input('Частота: '))
-        ws[freqbox].number_format='0.0'
+        ws[freqcell] = float(input('Частота: '))
+        ws[freqcell].number_format='0.0'
 
         print('\nСохранение...')
         wb.save(fileadd)
         print('Сохранение выполнено!')
 
-        print(f'\nВведенные данные: {current_date}\nТемпература: {ws[tempbox].value} °С | Влажность: {ws[humbox].value} % | Давление: {ws[presbox].value} кПа | Напряжение: {ws[voltbox].value} В | Частота: {ws[freqbox].value} Гц\n')
+        print(f'\nВведенные данные: {current_date}\nТемпература: {ws[tempcell].value} °С | Влажность: {ws[humcell].value} % | Давление: {ws[prescell].value} кПа | Напряжение: {ws[voltcell].value} В | Частота: {ws[freqcell].value} Гц\n')
 elif ans == '2':
     search_date=input('Введите дату в формате дд.мм.гггг: ')
     sline = search_line(search_date) 
