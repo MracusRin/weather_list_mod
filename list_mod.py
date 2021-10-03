@@ -4,13 +4,13 @@ import time
 from datetime import date, timedelta, datetime
 
 current_date = datetime.now().strftime('%d.%m.%Y')
-#fileadd='Y:\\Супер общий зал\\Нормальные условия.xlsx'
-fileadd='E:\\OneDrive\\Programming\\Python\\project\\exel\\weather.xlsx'
+file_address='Y:\\Супер общий зал\\Нормальные условия.xlsx'
+#file_address='E:\\OneDrive\\Programming\\Python\\project\\exel\\weather.xlsx'
 datecol=7 # Номер колонки где сохранена дата в файле
 chort=0
 start_search = 1000
 end_searhc = 2001
-wb = openpyxl.load_workbook(fileadd)
+wb = openpyxl.load_workbook(file_address)
 ws = wb.active    
 title_parameter = ['\nТемпература: ', 'Влажность: ', 'Давление: ', 'Напряжение: ', 'Частота: ']
 weather_unit = [' °С',' %',' кПа',' В',' Гц']
@@ -40,7 +40,7 @@ ans = input('\nВвести данные  - 1\nДанные по дате - 2\n�
 if ans == '1':
     # можно вынести в начало и проверять условие там
     try: 
-        myfile = open(fileadd, "r+") # or "a+", whatever you need
+        myfile = open(file_address, "r+") # or "a+", whatever you need
     except IOError:
         print ('\n!!! Какойто ЧОРТ уже открыл твой файл !!!\nВвод отмен')
         chort=1
@@ -52,7 +52,7 @@ if ans == '1':
             ws[weather_cell[i]].number_format='0.00'           
 
         print('\nСохранение...')
-        wb.save(fileadd)
+        wb.save(file_address)
         print('Сохранение выполнено!')
 
         print(f'\nВведенные данные: {current_date}')
