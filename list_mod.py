@@ -1,6 +1,7 @@
 import openpyxl 
 import time
-from datetime import datetime
+#from datetime import datetime, timedelta
+from datetime import date, timedelta, datetime
 
 current_date = datetime.now().strftime('%d.%m.%Y')
 #fileadd='Y:\\Супер общий зал\\Нормальные условия.xlsx'
@@ -26,13 +27,13 @@ def print_weather (weather_cell):
     a=[]
     for i in range(0, len(title_parameter)):
         a.append(title_parameter[i] + str(ws[weather_cell[i]].value) + weather_unit[i])
-    print(a[0],'|', a[1],'|', a[2],'|', a[3],'|', a[4], '\n')
+    print(a[0],'|', a[1],'|', a[2],'|', a[3],'|', a[4])
 
 print(f'Норманьные условия сегодня: {current_date}')
 weather_cell=search_line_cell(current_date) 
 print_weather(weather_cell)
 
-ans = input('Ввести данные - нажмите 1. Посмотреть данные по дате - нажмите 2: ')
+ans = input('\nВвести данные  - 1\nДанные по дате - 2\nДанные по дням - 3\n\nВыберете действие: ')
 if ans == '1':
     # можно вынести в начало и проверять условие там
     try: 
@@ -42,7 +43,7 @@ if ans == '1':
         chort=1
 
     if chort != 1:
-
+        
         for i in range(0, len(title_parameter)):
             ws[weather_cell[i]] = float(input(title_parameter[i]))
             ws[weather_cell[i]].number_format='0.00'           
@@ -59,10 +60,18 @@ elif ans == '2':
     print(f'\nНормальные условия: {search_date}')
     weather_cell = search_line_cell(search_date) 
     print_weather(weather_cell)
-    time.sleep(7)
 
+elif ans == '3':
+    day=int(input(f'\nЗа колько дней показать погоду? '))
+    for i in range(0,day+1):
+        back_date = (datetime.now() - timedelta(days=i)).strftime('%d.%m.%Y')
+        weather_cell = search_line_cell(back_date) 
+        print('-'*102)
+        print(back_date)
+        print_weather(weather_cell)
+        
 else:
     print('Ввод отмен')
 
-time.sleep(3)
+input('\nНажмите чтонить для выхода ')
 
