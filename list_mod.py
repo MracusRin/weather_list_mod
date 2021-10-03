@@ -5,7 +5,7 @@ from datetime import datetime
 current_date = datetime.now().strftime('%d.%m.%Y')
 #fileadd='Y:\\Супер общий зал\\Нормальные условия.xlsx'
 fileadd='E:\\OneDrive\\Programming\\Python\\project\\exel\\weather.xlsx'
-datacol=7 # Номер колонки где сохранена дата в файле
+datecol=7 # Номер колонки где сохранена дата в файле
 chort=0
 start_search = 1000
 end_searhc = 2001
@@ -13,14 +13,13 @@ wb = openpyxl.load_workbook(fileadd)
 ws = wb.active    
 title_parameter = ['Температура: ', 'Влажность: ', 'Давление: ', 'Напряжение: ', 'Частота: ']
 #weather_unit = ['°С','%','кПа','В','Гц']
-#Можно принимать значинея от пользователя в массивы!!!!!!!!
 
 def search_line(search_date):
     #for i in range(1, ws.max_row + 1, ): # поиск по максимуму, до конца документа
     for i in range(start_search, end_searhc, ): #диапазаон поиска даты
-        if search_date == ws.cell(i,datacol).value:
-            data_line = str(ws.cell(i,datacol).row)
-    weather= ['B' + data_line,'C' + data_line,'D' + data_line,'E' + data_line,'F' + data_line]
+        if search_date == ws.cell(i,datecol).value:
+            data_line = str(ws.cell(i,datecol).row)
+    weather = ['B' + data_line,'C' + data_line,'D' + data_line,'E' + data_line,'F' + data_line]
     return weather     
 
 weather_cell=search_line(current_date) 
