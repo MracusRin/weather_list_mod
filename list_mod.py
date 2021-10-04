@@ -14,6 +14,7 @@ wb = openpyxl.load_workbook(file_address)
 ws = wb.active    
 title_parameter = ['\nТемпература: ', 'Влажность: ', 'Давление: ', 'Напряжение: ', 'Частота: ']
 weather_unit = [' °С',' %',' кПа',' В',' Гц']
+format_list=['н/д ','н/д ','н/д   ','н/д','н/д']
 
 def search_line_cell(search_date):
     #for i in range(1, ws.max_row + 1, ): # поиск по максимуму, до конца документа
@@ -23,14 +24,17 @@ def search_line_cell(search_date):
     weather = ['B' + data_line,'C' + data_line,'D' + data_line,'E' + data_line,'F' + data_line]
     return weather  
 
-def print_weather (weather_cell):
+def print_weather (weather_cell, date=''):
     a=[]
     for i in range(0, len(title_parameter)):
         item=str(ws[weather_cell[i]].value)
         if item == 'None':
-            item = 'н/д '
+            item = format_list[i]
         a.append(title_parameter[i] + item + weather_unit[i])
-    print(a[0],'|', a[1],'|', a[2],'|', a[3],'|', a[4])
+    if date != '':
+        a[0]= a[0][1:]
+    print(date, a[0],'|', a[1],'|', a[2],'|', a[3],'|', a[4])
+
 
 print(f'Норманьные условия сегодня: {current_date}')
 weather_cell=search_line_cell(current_date) 
@@ -49,7 +53,7 @@ if ans == '1':
         
         for i in range(0, len(title_parameter)):
             ws[weather_cell[i]] = float(input(title_parameter[i]))
-            ws[weather_cell[i]].number_format='0.00'           
+            ws[weather_cell[i]].number_format='0.00'
 
         print('\nСохранение...')
         wb.save(file_address)
@@ -66,12 +70,11 @@ elif ans == '2':
 
 elif ans == '3':
     day=int(input(f'\nЗа колько дней показать погоду? '))
-    for i in range(0,day+1):
+    for i in range(0,day):
         back_date = (datetime.now() - timedelta(days=i)).strftime('%d.%m.%Y')
         weather_cell = search_line_cell(back_date) 
-        print('-'*102)
-        print(back_date)
-        print_weather(weather_cell)
+        print('_'*113)
+        print_weather(weather_cell, back_date)
         
 else:
     print('Ввод отмен')
