@@ -1,6 +1,7 @@
 import openpyxl
 import time
 from datetime import datetime, timedelta
+from art import *
 
 current_date = datetime.now().strftime('%d.%m.%Y')
 file_address='Y:\\Супер общий зал\\Нормальные условия.xlsx'
@@ -21,7 +22,9 @@ def search_line_cell(search_date):
             data_line = str(ws.cell(i,datecol).row)
     weather = ['B' + data_line,'C' + data_line,'D' + data_line,'E' + data_line,'F' + data_line]
     return weather
-print('Нормальные условия 2.0')
+
+
+print("Weather 2.0")
 
 def print_weather (weather_cell, date=''):
     a=[]
@@ -73,9 +76,12 @@ def main():
             print('_'*113)
             print_weather(weather_cell, back_date)
     elif ans == '4':
-        print('Выхода нет!')
+        print(art("random"))
+        exit()
     else:
         print('Не верный ввод')
+        
+        
 
     main()
 
