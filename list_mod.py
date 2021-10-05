@@ -4,8 +4,8 @@ from datetime import datetime, timedelta
 from art import *
 
 current_date = datetime.now().strftime('%d.%m.%Y')
-file_address='Y:\\Супер общий зал\\Нормальные условия.xlsx'
-#file_address='E:\\OneDrive\\Programming\\Python\\project\\exel\\weather.xlsx'
+#file_address='Y:\\Супер общий зал\\Нормальные условия.xlsx'
+file_address='E:\\OneDrive\\Programming\\Python\\project\\exel\\weather.xlsx'
 datecol=7
 chort=0
 start_search = 1000
@@ -34,7 +34,7 @@ def print_weather (weather_cell, date=''):
         a[0]= a[0][1:]
     print(date, a[0],'|', a[1],'|', a[2],'|', a[3],'|', a[4])
 
-    tprint("Weather 2.0")
+tprint("Weather 2.0")
 
 def main():
     try:
