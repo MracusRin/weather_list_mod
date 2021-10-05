@@ -23,9 +23,6 @@ def search_line_cell(search_date):
     weather = ['B' + data_line,'C' + data_line,'D' + data_line,'E' + data_line,'F' + data_line]
     return weather
 
-
-print("Weather 2.0")
-
 def print_weather (weather_cell, date=''):
     a=[]
     for i in range(0, len(title_parameter)):
@@ -37,31 +34,33 @@ def print_weather (weather_cell, date=''):
         a[0]= a[0][1:]
     print(date, a[0],'|', a[1],'|', a[2],'|', a[3],'|', a[4])
 
+    tprint("Weather 2.0")
+
 def main():
     try:
         myfile = open(file_address, "r+") # or "a+", whatever you need
     except IOError:
         print ('\n!!! Какойто ЧОРТ уже открыл твой файл !!!\nВвод отмен')
         chort=1
-    
+
     ans = input('\n***Главное меню***\nДанные сегодня - 0\nВвести данные  - 1\nДанные по дате - 2\nДанные по дням - 3\nВыход          - 4\nВыберете действие: ')
-    
+ 
     if ans =='0':
         print(f'\nНорманьные условия сегодня: {current_date}')
         weather_cell=search_line_cell(current_date)
         print_weather(weather_cell)
+
     elif ans == '1':
         print('\nВвод данных:')
         weather_cell=search_line_cell(current_date)
         for i in range(0, len(title_parameter)):
             ws[weather_cell[i]] = float(input(title_parameter[i]))
             ws[weather_cell[i]].number_format='0.00'
-
         print('\nСохранение...')
         wb.save(file_address)
         print(f'Сохранение выполнено!\n\nВведенные данные: {current_date}')
         print_weather(weather_cell)
-
+ 
     elif ans == '2':
         search_date=input('Введите дату в формате дд.мм.гггг: ')
         print(f'\nНормальные условия: {search_date}')
@@ -75,14 +74,14 @@ def main():
             weather_cell = search_line_cell(back_date)
             print('_'*113)
             print_weather(weather_cell, back_date)
+ 
     elif ans == '4':
         print(art("random"))
         exit()
+   
     else:
         print('Не верный ввод')
-        
-        
-
+   
     main()
 
 main()
