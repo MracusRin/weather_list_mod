@@ -1,26 +1,26 @@
 import openpyxl
-import time
 from datetime import datetime, timedelta
 from art import *
 
 current_date = datetime.now().strftime('%d.%m.%Y')
 # file_address='Y:\\Супер общий зал\\Нормальные условия.xlsx'
 file_address = 'E:\\OneDrive\\Programming\\Python\\project\\exel\\weather.xlsx'
-datecol = 7
-chort = 0
-start_search = 1000
-end_search = 2001
+date_column = 7
 wb = openpyxl.load_workbook(file_address)
 ws = wb.active
+start_search = 1000
+end_search = 2001
+
 title_parameter = ['\nТемпература: ', 'Влажность: ', 'Давление: ', 'Напряжение: ', 'Частота: ']
 weather_unit = [' °С', ' %', ' кПа', ' В', ' Гц']
 format_list = ['н/д ', 'н/д ', 'н/д   ', 'н/д', 'н/д']
 
 
 def search_line_cell(search_date):
+    data_line = ''
     for i in range(start_search, end_search, ):
-        if search_date == ws.cell(i, datecol).value:
-            data_line = str(ws.cell(i, datecol).row)
+        if search_date == ws.cell(i, date_column).value:
+            data_line = str(ws.cell(i, date_column).row)
     weather = ['B' + data_line, 'C' + data_line, 'D' + data_line, 'E' + data_line, 'F' + data_line]
     return weather
 
@@ -41,11 +41,11 @@ tprint("Weather 2.0")
 
 
 def main():
-    try:
-        myfile = open(file_address, "r+")  # or "a+", whatever you need
-    except IOError:
-        print('\n!!! Какойто ЧОРТ уже открыл твой файл !!!\nВвод отмен')
-        chort = 1
+    # try:
+    #     myfile = open(file_address, "r+")  # or "a+", whatever you need
+    # except IOError:
+    #     print('\n!!! Какойто ЧОРТ уже открыл твой файл !!!\nВвод отмен')
+    #     chort = 1
 
     ans = input(
         '\n***Главное меню***\nДанные сегодня - 0\nВвести данные  - 1\nДанные по дате - 2\nДанные по дням - 3\nВыход  '
