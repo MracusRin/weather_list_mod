@@ -1,0 +1,1 @@
+pyinstaller.exe --onefile --icon=Weather.ico list_mod.py

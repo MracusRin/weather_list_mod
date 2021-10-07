@@ -3,8 +3,8 @@ from datetime import datetime, timedelta
 from art import *
 
 current_date = datetime.now().strftime('%d.%m.%Y')
-# file_address='Y:\\Супер общий зал\\Нормальные условия.xlsx'
-file_address = 'E:\\OneDrive\\Programming\\Python\\project\\exel\\weather.xlsx'
+file_address = 'Y:\\Супер общий зал\\Нормальные условия.xlsx'
+# file_address = 'E:\\OneDrive\\Programming\\Python\\project\\exel\\weather.xlsx'
 date_column = 7
 wb = openpyxl.load_workbook(file_address)
 ws = wb.active
