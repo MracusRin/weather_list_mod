@@ -1,26 +1,29 @@
-import openpyxl
 from datetime import datetime, timedelta
+from colorama import init, Fore, Back, Style
 from art import *
+import openpyxl
+import json
+import codecs
+
+init()
+
+with codecs.open('list_cfg.json', 'r', 'utf-8-sig') as f:
+    cfg = json.load(f)
 
 current_date = datetime.now().strftime('%d.%m.%Y')
-file_address = 'Y:\\Супер общий зал\\Нормальные условия.xlsx'
-# file_address = 'E:\\OneDrive\\Programming\\Python\\project\\exel\\weather.xlsx'
-date_column = 7
-wb = openpyxl.load_workbook(file_address)
-ws = wb.active
-start_search = 1000
-end_search = 2001
-
 title_parameter = ['\nТемпература: ', 'Влажность: ', 'Давление: ', 'Напряжение: ', 'Частота: ']
 weather_unit = [' °С', ' %', ' кПа', ' В', ' Гц']
 format_list = ['н/д ', 'н/д ', 'н/д   ', 'н/д', 'н/д']
 
+wb = openpyxl.load_workbook(cfg['file_address'])
+ws = wb.active
+
 
 def search_line_cell(search_date):
     data_line = ''
-    for i in range(start_search, end_search, ):
-        if search_date == ws.cell(i, date_column).value:
-            data_line = str(ws.cell(i, date_column).row)
+    for i in range(cfg["start_search"], cfg["end_search"], ):
+        if search_date == ws.cell(i, cfg["date_column"]).value:
+            data_line = str(ws.cell(i, cfg["date_column"]).row)
     weather = ['B' + data_line, 'C' + data_line, 'D' + data_line, 'E' + data_line, 'F' + data_line]
     return weather
 
@@ -37,18 +40,19 @@ def print_weather(weather_cell, date=''):
     print(date, a[0], '|', a[1], '|', a[2], '|', a[3], '|', a[4])
 
 
+print(Fore.YELLOW)
 tprint("Weather 2.0")
+print(Style.RESET_ALL)
 
 
 def main():
     # try:
-    #     myfile = open(file_address, "r+")  # or "a+", whatever you need
+    #     my_file = open(file_address, "r+")  # or "a+", whatever you need
     # except IOError:
     #     print('\n!!! Какойто ЧОРТ уже открыл твой файл !!!\nВвод отмен')
-    #     chort = 1
-
+    print(Back.YELLOW + Fore.BLACK + '\n***Главное меню***' + Style.RESET_ALL)
     ans = input(
-        '\n***Главное меню***\nДанные сегодня - 0\nВвести данные  - 1\nДанные по дате - 2\nДанные по дням - 3\nВыход  '
+        '\nДанные сегодня - 0\nВвести данные  - 1\nДанные по дате - 2\nДанные по дням - 3\nВыход  '
         '        - 4\nВыберете действие: ')
 
     if ans == '0':
@@ -63,7 +67,7 @@ def main():
             ws[weather_cell[i]] = float(input(title_parameter[i]))
             ws[weather_cell[i]].number_format = '0.00'
         print('\nСохранение...')
-        wb.save(file_address)
+        wb.save(cfg['file_address'])
         print(f'Сохранение выполнено!\n\nВведенные данные: {current_date}')
         print_weather(weather_cell)
 
@@ -82,11 +86,21 @@ def main():
             print_weather(weather_cell, back_date)
 
     elif ans == '4':
-        print(art("random"))
         exit()
+    elif ans == '6':
+        print('\n', Fore.YELLOW + art("random") + Style.RESET_ALL)
 
+    elif ans == '8':
+        print('\nНЕВЕРЫЙ ВВОД! Тут ничего нет, перестать тыкать не те кнопки!')
+
+    elif ans == '9':
+        print(
+            Fore.YELLOW + '\nРомчег, автор приложухи сей.\nБлагодарность ему и низкий поклон.\nЛучшему из людей.\nИ '
+                          'вообще себя не похвалишь, никто не похвалит.\nА теперь харош глазеть. Иди работай!' +
+            Style.RESET_ALL)
+        tprint("Waaagh!", "graffiti")
     else:
-        print('Не верный ввод')
+        print(Fore.RED + '\nНе верный ввод ' + Style.RESET_ALL)
 
     main()
 
