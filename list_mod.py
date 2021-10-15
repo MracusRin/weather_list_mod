@@ -1,6 +1,5 @@
 from datetime import datetime, timedelta
 from colorama import init, Fore, Back, Style
-from art import *
 import openpyxl
 import json
 import codecs
@@ -12,7 +11,6 @@ init()
 # TODO: попробовать предусмотреть режим работы без цветов
 # TODO: довавить эксепшен если фаил уже открыт
 #   предусмотреть в таком случае отключение меню редактирования
-# TODO: убрать art и земенить его на простой print
 
 
 with codecs.open('list_cfg_home.json', 'r', 'utf-8-sig') as f:
@@ -83,9 +81,24 @@ def weather_few_days():
         print_weather(weather_cell_address, back_date)
 
 
-print(Fore.YELLOW)
-tprint("Weather 2.0")
-print(Style.RESET_ALL)
+def waaagh():
+    print(r"""
+                                              .__     ._.
+    __  _  _______   _____   _____      ____  |  |__  | |
+    \ \/ \/ /\__  \  \__  \  \__  \    / ___\ |  |  \ | |
+     \     /  / __ \_ / __ \_ / __ \_ / /_/  >|   Y  \ \|
+      \/\_/  (____  /(____  /(____  / \___  / |___|  / __
+                  \/      \/      \/ /_____/       \/  \/
+    """)
+
+
+print(r"""
+__        __              _    _                   ____       ___
+\ \      / /  ___   __ _ | |_ | |__    ___  _ __  |___ \     / _ \
+ \ \ /\ / /  / _ \ / _` || __|| '_ \  / _ \| '__|   __) |   | | | |
+  \ V  V /  |  __/| (_| || |_ | | | ||  __/| |     / __/  _ | |_| |
+   \_/\_/    \___| \__,_| \__||_| |_| \___||_|    |_____|(_) \___/
+""")
 
 while True:
     print('\n', Back.YELLOW + Fore.BLACK + '**Главное меню**' + Style.RESET_ALL)
@@ -104,8 +117,7 @@ while True:
     elif ans == '7':
         print('\nНЕВЕРЫЙ ВВОД! Тут ничего нет, перестать тыкать не те кнопки!')
     elif ans == '9':
-        print(
-            Fore.YELLOW + '\nШирокую на широкую!' + Style.RESET_ALL)
-        tprint("Waaagh!", "graffiti")
+        print(Fore.YELLOW + '\nШирокую на широкую!' + Style.RESET_ALL)
+        waaagh()
     else:
         print(Fore.RED + '\nНе верный ввод ' + Style.RESET_ALL)
