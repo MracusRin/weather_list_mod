@@ -15,36 +15,37 @@ init()
 #   предусмотреть в таком случае отключение меню редактирования
 # TODO: убрать art и земенить его на простой print
 # TODO: попробовать перещитывать формант даты Экселя в нормальную дату
-# TODO: !!! научиться переводить конченый формат даты Excel в нормальную дату!!!
 
-with codecs.open('list_cfg.json', 'r', 'utf-8-sig') as f:
-    cfg = json.load(f)
+
+with codecs.open('list_cfg_home.json', 'r', 'utf-8-sig') as f:
+    config_paramm = json.load(f)
 
 current_date = datetime.now().strftime('%d.%m.%Y')
-title_parameter = ['\nТемпература: ', 'Влажность: ', 'Давление: ', 'Напряжение: ', 'Частота: ']
-weather_unit = [' °С', ' %', ' кПа', ' В', ' Гц']
+cell_name = ['\nТемпература: ', 'Влажность: ', 'Давление: ', 'Напряжение: ', 'Частота: ']
+weather_measure = [' °С', ' %', ' кПа', ' В', ' Гц']
 format_list = ['н/д ', 'н/д ', 'н/д   ', 'н/д', 'н/д']
 
-wb = openpyxl.load_workbook(cfg['file_address'])
+wb = openpyxl.load_workbook(config_paramm['file_address'])
 ws = wb.active
 
 
-def search_line_cell(search_date):
-    data_line = ''
-    for i in range(cfg["start_search"], cfg["end_search"], ):
-        if search_date == ws.cell(i, cfg["date_column"]).value:
-            data_line = str(ws.cell(i, cfg["date_column"]).row)
-    weather = ['B' + data_line, 'C' + data_line, 'D' + data_line, 'E' + data_line, 'F' + data_line]
-    return weather
+def search_cell_address(search_date):
+    date_line = ''
+    for i in range(config_paramm["start_search"], config_paramm["end_search"], ):
+        if search_date == str(ws['A'+str(i)].value.strftime('%d.%m.%Y')):
+            date_line = str(i)
+            break
+    weather_cell_address = ['B' + date_line, 'C' + date_line, 'D' + date_line, 'E' + date_line, 'F' + date_line]
+    return weather_cell_address
 
 
-def print_weather(weather_cell, date=''):
+def print_weather(weather_cell_addres, date=''):
     a = []
-    for i in range(0, len(title_parameter)):
-        item = str(ws[weather_cell[i]].value)
-        if item == 'None':
-            item = format_list[i]
-        a.append(title_parameter[i] + item + weather_unit[i])
+    for i in range(0, len(cell_name)):
+        cell_value = str(ws[weather_cell_addres[i]].value)
+        if cell_value == 'None':
+            cell_value = format_list[i]
+        a.append(cell_name[i] + cell_value + weather_measure[i])
     if date != '':
         a[0] = a[0][1:]
     print(date, a[0], '|', a[1], '|', a[2], '|', a[3], '|', a[4])
@@ -56,44 +57,40 @@ print(Style.RESET_ALL)
 
 
 def main():
-    # try:
-    #     my_file = open(file_address, "r+")  # or "a+", whatever you need
-    # except IOError:
-    #     print('\n!!! Какойто ЧОРТ уже открыл твой файл !!!\nВвод отмен')
-    print(Back.YELLOW + Fore.BLACK + '\n***Главное меню***' + Style.RESET_ALL)
+    print('\n',Back.YELLOW + Fore.BLACK + '**Главное меню**' + Style.RESET_ALL)
     ans = input(
         '\nДанные сегодня - 0\nВвести данные  - 1\nДанные по дате - 2\nДанные по дням - 3\nВыход  '
         '        - 4\nВыберете действие: ')
 
     if ans == '0':
         print(f'\nНорманьные условия сегодня: {current_date}')
-        weather_cell = search_line_cell(current_date)
-        print_weather(weather_cell)
+        weather_cell_addres = search_cell_address(current_date)
+        print_weather(weather_cell_addres)
 
     elif ans == '1':
         print('\nВвод данных:')
-        weather_cell = search_line_cell(current_date)
-        for i in range(0, len(title_parameter)):
-            ws[weather_cell[i]] = float(input(title_parameter[i]))
-            ws[weather_cell[i]].number_format = '0.00'
+        weather_cell_addres = search_cell_address(current_date)
+        for i in range(0, len(cell_name)):
+            ws[weather_cell_addres[i]] = float(input(cell_name[i]))
+            ws[weather_cell_addres[i]].number_format = '0.00'
         print('\nСохранение...')
-        wb.save(cfg['file_address'])
+        wb.save(config_paramm['file_address'])
         print(f'Сохранение выполнено!\n\nВведенные данные: {current_date}')
-        print_weather(weather_cell)
+        print_weather(weather_cell_addres)
 
     elif ans == '2':
         search_date = input('Введите дату в формате дд.мм.гггг: ')
         print(f'\nНормальные условия: {search_date}')
-        weather_cell = search_line_cell(search_date)
-        print_weather(weather_cell)
+        weather_cell_addres = search_cell_address(search_date)
+        print_weather(weather_cell_addres)
 
     elif ans == '3':
         day = int(input(f'\nЗа колько дней показать погоду? '))
         for i in range(0, day):
             back_date = (datetime.now() - timedelta(days=i)).strftime('%d.%m.%Y')
-            weather_cell = search_line_cell(back_date)
+            weather_cell_addres = search_cell_address(back_date)
             print('_' * 113)
-            print_weather(weather_cell, back_date)
+            print_weather(weather_cell_addres, back_date)
 
     elif ans == '4':
         exit()
@@ -105,9 +102,7 @@ def main():
 
     elif ans == '9':
         print(
-            Fore.YELLOW + '\nРомчег, автор приложухи сей.\nБлагодарность ему и низкий поклон.\nЛучшему из людей.\nИ '
-                          'вообще себя не похвалишь, никто не похвалит.\nА теперь харош глазеть. Иди работай!' +
-            Style.RESET_ALL)
+            Fore.YELLOW + '\nШирокую на широкую!' +  Style.RESET_ALL)
         tprint("Waaagh!", "graffiti")
     else:
         print(Fore.RED + '\nНе верный ввод ' + Style.RESET_ALL)
