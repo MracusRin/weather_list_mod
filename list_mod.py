@@ -8,6 +8,7 @@ import codecs
 from datetime import datetime, timedelta
 from click import clear, secho
 from openpyxl import load_workbook
+from os import remove
 
 # TODO: Добавь документацию. Missing function or method docstring (missing-function-docstring)
 # TODO: цвет добавлен, отчиска добавленна, может что-то еще есть полезного в click?
@@ -17,42 +18,59 @@ from openpyxl import load_workbook
 # TODO: довавить эксепшен если фаил уже открыт
 #   предусмотреть в таком случае отключение меню редактирования
 
-
-default_config = {"file_address": "Z:\\Change\\The Address\\To Your File\\",
-                  "file_name": "Weather.xlsx",
-                  "start_search": 1010,
-                  "end_search": 2001}
-
-
-def check_config(def_config):
-    try:
-        with codecs.open('list_cfg.json', 'r', 'utf-8-sig') as f:
-            config_file = json.load(f)
-        if def_config != config_file:
-            start_on = True
-        else:
-            print('Измени конфиг list_cfg.json\nПотом пробуй запускать!')
-            input('\nНажми Enter чтобы выйти ')
-            start_on = False
-        return start_on, config_file
-    except FileNotFoundError:
-        print('Файл конфигурации list_cfg.json не найден, создан новый файл в папке с программой\n\n'
-              'Значение file_address: "Измени на путь к файлу excel согласно шалону"\n'
-              'Значение file_name: "Измени на нимя файла с погодой. По умоланию Weather.xlsx"\n'
-              'Значение start_search: "Начальная строка поиска. Можно не менять. По умолчаниу 1000"\n'
-              'Значение end_search: "Конечная строка поиска. Можно не менять. По умолчаниу 2001"\n\n'
-              'Измени конфиг и попробуй запустить еще раз')
-        input('\nНажми Enter чтобы выйти ')
-        with codecs.open('list_cfg.json', 'w+', 'utf-8-sig') as f:
-            json.dump(default_config, f)
-        start_on = False
-    return start_on, ''
-
-
 current_date = datetime.now().strftime('%d.%m.%Y')
 cell_name = ['\nТемпература: ', 'Влажность: ', 'Давление: ', 'Напряжение: ', 'Частота: ']
 weather_measure = [' °С', ' %', ' кПа', ' В', ' Гц']
 format_list = ['н/д ', 'н/д ', 'н/д   ', 'н/д', 'н/д']
+
+
+def check_and_input_config():
+    try:
+        with codecs.open('list_cfg.json', 'r', 'utf-8-sig') as f:
+            config_file = json.load(f)
+        return config_file
+    except FileNotFoundError:
+        config = {}
+        secho('Конфиг list_cfg.json не найден, давай его создадим', bg='red', bold=True)
+        config["file_address"] = input('\nВставте адрес папки (Ctrl + V): ') + '\\'
+        config["file_name"] = input('Вставте имя файла (Ctrl + V): ')
+        if '.xlsx' not in config["file_name"].lower():
+            config["file_name"] += '.xlsx'
+        print('Введи начальную строку поиска')
+        start_search = input('По умолчанию значение 1000: ')
+        if start_search != '':
+            config["start_search"] = int(start_search)
+        else:
+            config["start_search"] = 1000
+        print('Введи конечную строку поиска')
+        end_search = input('По умолчанию значение 2001: ')
+        if end_search != '':
+            config["end_search"] = int(end_search)
+        else:
+            config["end_search"] = 2001
+        with codecs.open('list_cfg.json', 'w+') as file:
+            json.dump(config, file)
+            print('Конфиг создан!')
+    return config
+
+
+def check_open_weather_file():
+    try:
+        open(config_params['file_address'] + config_params['file_name'], 'r')
+        return True
+    except PermissionError:
+        secho('\nФайл с погодой уже кемто открыт!', bg='red', bold=True)
+        input('Нажмите Enter для выхода ')
+        return False
+    except FileNotFoundError:
+        secho('\nФайл с погодой не найден!', bg='red', bold=True)
+        create_config = input('Пересоздать конфиг? y/n ')
+        if create_config != 'y':
+            return False
+        else:
+            remove('list_cfg.json')
+            check_and_input_config()
+            return True
 
 
 def search_cell_address(search_date):
@@ -144,17 +162,39 @@ __        __              _    _                   ____       ___
    \_/\_/    \___| \__,_| \__||_| |_| \___||_|    |_____|(_) \___/
 """, fg='yellow')
 
-start_program, config_params = check_config(default_config)
+config_params = check_and_input_config()
+
+try:
+    open(config_params['file_address'] + config_params['file_name'], 'r')
+    start_program = True
+    
+except PermissionError:
+    secho('\nФайл с погодой уже кемто открыт!', bg='red', bold=True)
+    input('\nНажмите Enter для выхода ')
+    start_program = False
+    
+except FileNotFoundError:
+    secho('\nФайл с погодой не найден!', bg='red', bold=True)
+    create_or_die = input('\nПересоздать конфиг? y/n ')
+    if create_or_die != 'y':
+        start_program = False
+        
+    else:
+        remove('list_cfg.json')
+        config_params = check_and_input_config()
+        start_program = True
+            
 
 while start_program:
     wb = load_workbook(config_params['file_address'] + config_params['file_name'])
     ws = wb.active
-    secho('\n***Главное меню***', bg='yellow', fg='black')
-    print('\nДанные сегодня - 0'
-          '\nВвести данные  - 1'
-          '\nДанные по дате - 2'
-          '\nДанные по дням - 3'
-          '\nВыход          - 4')
+    secho('\n     Главное меню     ', bg='yellow', fg='black')
+    print('\nДанные сегодня     - 0'
+          '\nВвести данные      - 1'
+          '\nДанные по дате     - 2'
+          '\nДанные по дням     - 3'
+          '\nПересоздать конфиг - +'
+          '\nВыход              - 4')
     ans = input('\nВыберете действие: ')
     if ans == '4':
         break
@@ -167,6 +207,14 @@ while start_program:
     elif ans == '3':
         clear()
         weather_few_days()
+    elif ans == '+':
+        clear()
+        caution = input('Внимание! Это действие удалит текущий конфиг! Продолжить? y/n ')
+        if caution == 'y':
+            remove('list_cfg.json')
+            config_params = check_and_input_config()
+        else:
+            continue
     elif ans == '7':
         clear()
         secho('НЕВЕРЫЙ ВВОД! Тут ничего нет, перестать тыкать не те кнопки!', bg='red', bold=True)
