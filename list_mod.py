@@ -15,8 +15,8 @@ from os import remove
 #   https://click.palletsprojects.com/en/8.0.x/utils/
 #   https://habr.com/ru/company/oleg-bunin/blog/551424/
 # TODO: попробовать предусмотреть режим работы без цветов, а надо ли оно?
-# TODO: довавить эксепшен если фаил уже открыт
-#   предусмотреть в таком случае отключение меню редактирования
+# TODO: добавить readme на GitHub
+# TODO: Подумай как можно переписать скрипт с использованием классов
 
 current_date = datetime.now().strftime('%d.%m.%Y')
 cell_name = ['\nТемпература: ', 'Влажность: ', 'Давление: ', 'Напряжение: ', 'Частота: ']
@@ -73,6 +73,17 @@ def check_open_weather_file():
             return True
 
 
+def waaagh():
+    secho(r"""
+                                              .__     ._.
+    __  _  _______   _____   _____      ____  |  |__  | |
+    \ \/ \/ /\__  \  \__  \  \__  \    / ___\ |  |  \ | |
+     \     /  / __ \_ / __ \_ / __ \_ / /_/  >|   Y  \ \|
+      \/\_/  (____  /(____  /(____  / \___  / |___|  / __
+                  \/      \/      \/ /_____/       \/  \/
+    """, fg='red')
+
+
 def search_cell_address(search_date):
     value = ''
     for i in range(config_params["start_search"], config_params["end_search"], ):
@@ -103,8 +114,7 @@ def weather_today():
 
 
 def weather_input():
-    clear()
-    print('Ввод данных:')
+    print('\nВвод данных:')
     weather_cell_address = search_cell_address(current_date)
     for i in range(0, len(cell_name)):
         ws[weather_cell_address[i]] = float(input(cell_name[i]))
@@ -142,16 +152,20 @@ def weather_few_days():
             break
 
 
-def waaagh():
-    secho(r"""
-                                              .__     ._.
-    __  _  _______   _____   _____      ____  |  |__  | |
-    \ \/ \/ /\__  \  \__  \  \__  \    / ___\ |  |  \ | |
-     \     /  / __ \_ / __ \_ / __ \_ / /_/  >|   Y  \ \|
-      \/\_/  (____  /(____  /(____  / \___  / |___|  / __
-                  \/      \/      \/ /_____/       \/  \/
-    """, fg='red')
-
+def set_config(config_params):
+    clear()
+    secho('Твои текущие настройки:', bg='yellow', fg='black')
+    print(
+        f'Адрес папки: {config_params["file_address"]}\n'
+        f'Название файла: {config_params["file_name"]}\n'
+        f'Номер строки начала поиска даты: {config_params["start_search"]}\n'
+        f'Номер строки конца писка даты: {config_params["end_search"]}\n\n'
+        'Измерить настройки?')
+    caution = input('Внимание! Изменение удалит текущий конфиг! Продолжить? y/n ')
+    if caution.lower() == 'y':
+        remove('list_cfg.json')
+        config_params = check_and_input_config()
+ 
 
 clear()
 secho(r"""
@@ -183,24 +197,29 @@ except FileNotFoundError:
         remove('list_cfg.json')
         config_params = check_and_input_config()
         start_program = True
-            
+
+
+# эти строчки можно попробовать перенести в try:
+wb = load_workbook(config_params['file_address'] + config_params['file_name'])
+ws = wb.active           
+
 
 while start_program:
-    wb = load_workbook(config_params['file_address'] + config_params['file_name'])
-    ws = wb.active
-    secho('\n     Главное меню     ', bg='yellow', fg='black')
-    print('\nДанные сегодня     - 0'
-          '\nВвести данные      - 1'
-          '\nДанные по дате     - 2'
-          '\nДанные по дням     - 3'
-          '\nПересоздать конфиг - +'
-          '\nВыход              - 4')
+    secho('\n    Главное меню    ', bg='yellow', fg='black')
+    print('\nДанные сегодня   - 0'
+          '\nПросмотр и ввод  - 1'
+          '\nДанные по дате   - 2'
+          '\nДанные по дням   - 3'
+          '\nНастройки        - +'
+          '\nВыход            - 4')
     ans = input('\nВыберете действие: ')
     if ans == '4':
         break
     elif ans == '0':
         weather_today()
     elif ans == '1':
+        clear()
+        weather_today()
         weather_input()
     elif ans == '2':
         weather_by_date()
@@ -208,13 +227,7 @@ while start_program:
         clear()
         weather_few_days()
     elif ans == '+':
-        clear()
-        caution = input('Внимание! Это действие удалит текущий конфиг! Продолжить? y/n ')
-        if caution == 'y':
-            remove('list_cfg.json')
-            config_params = check_and_input_config()
-        else:
-            continue
+        set_config(config_params)
     elif ans == '7':
         clear()
         secho('НЕВЕРЫЙ ВВОД! Тут ничего нет, перестать тыкать не те кнопки!', bg='red', bold=True)
